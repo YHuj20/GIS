@@ -1,0 +1,91 @@
+﻿UK SOC 2010 Code,Census Categories: Occupation,Occupation title,Exposure,Interaction,Location,Physical Activities,Tools/ Protective Equipment,Ability to homework score,Median hourly pay (£),Total in employment,Percentage of the workforce that are female(%),Percentage of the workforce that are aged 55+ (%),Percentage of the workforce that are BAME (%),% Working from home during Lockdown
+111,Chief Executives and Senior Officials,Chief executives and senior officials,0.23,0.3,0.29,0.19,0.22,1.23,44.08,108000,27.5,25,8.9,67.35
+112,Production Managers and Directors,Production managers and directors in manufacturing,0.55,0.19,0.6,0.34,0.6,2.27,22,320000,14,22.8,4.1,67.35
+113,Functional Managers and Directors,Financial managers and directors,0.03,0.21,0.12,0.09,0.06,0.51,31.38,357000,41.7,18.7,10.2,67.35
+115,Financial Institution Managers and Directors,Financial institution managers and directors,0.12,0.28,0.16,0.15,0.18,0.9,24.77,92000,36,11.9,10.9,67.35
+116,Managers and Directors in Transport and Logistics,Managers and directors in transport and distribution,0.27,0.29,0.47,0.28,0.45,1.77,18.16,87000,18.7,19.4,7.4,67.35
+117,Senior Officers in Protective Services,Senior police officers,0.54,0.66,0.65,0.41,0.46,2.71,27.65,13000,32.3,11.1,x,67.35
+118,Health and Social Services Managers and Directors,Health services and public health managers and directors,0.11,0.32,0.04,0.17,0.13,0.77,25.32,76000,69.8,22.3,6.5,67.35
+119,Managers and Directors in Retail and Wholesale,Managers and directors in retail and wholesale,0.3,0.43,0.22,0.28,0.43,1.66,13.12,355000,34.7,13.7,9.3,67.35
+121,Managers and Proprietors in Agriculture Related Services,Managers and proprietors in agriculture and horticulture,0.51,0.29,1,0.54,0.74,3.07,13.21,26000,16.2,27.8,x,67.35
+122,Managers and Proprietors in Hospitality and Leisure Services,Hotel and accommodation managers and proprietors,0.05,0.53,0.11,0.26,0.3,1.25,13.8,57000,54.5,28.9,7,67.35
+124,Managers and Proprietors in Health and Care Services,Health care practice managers,0.14,0.3,0.01,0.17,0.16,0.78,16.63,23000,86.6,23.6,13.2,67.35
+125,Managers and Proprietors in Other Services,"Property, housing and estate managers",0.21,0.28,0.35,0.21,0.3,1.35,17.34,200000,39.7,21.7,10.5,67.35
+211,Natural and Social Science Professionals,Chemical scientists,0.46,0.1,0.13,0.25,0.63,1.58,16.8,26000,34.2,14.4,9.7,69.58
+212,Engineering Professionals,Civil engineers,0.29,0.24,0.52,0.26,0.35,1.66,20.54,86000,9.7,14.5,8.9,69.58
+213,Information Technology and Telecommunications Professionals,IT specialist managers,0.04,0.08,0.09,0.05,0.14,0.4,24.42,212000,19.1,11.5,10.1,69.58
+214,Conservation and Environment Professionals,Conservation professionals,0.24,0.29,0.49,0.28,0.3,1.59,15.99,15000,51.8,9.1,x,69.58
+215,Research and Development Managers,Research and development managers,0.26,0.2,0.29,0.21,0.32,1.28,25.53,58000,39.2,12.3,5.9,69.58
+221,Health Professionals,Medical practitioners,0.41,0.71,0.05,0.24,0.41,1.81,31.4,298000,48.5,14.2,26.7,69.58
+222,Therapy Professionals,Physiotherapists,0.23,0.76,0.12,0.58,0.41,2.1,18.73,72000,70.6,11,7.3,69.58
+223,Nursing and Midwifery Professionals,Nurses,0.49,0.88,0.06,0.43,0.51,2.36,18.08,670000,87,19.3,19.5,69.58
+231,Teaching and Educational Professionals,Higher education teaching professionals,0.11,0.3,0.09,0.12,0.15,0.78,26.76,187000,47.5,19.6,11.1,69.58
+241,Legal Professionals,Barristers and judges,0.08,0.27,0.14,0.1,0.13,0.71,18.07,30000,35.2,16.1,6.6,69.58
+242,"Business, Research and Administrative Professionals",Chartered and certified accountants,0.03,0.19,0.07,0.06,0.09,0.44,20.1,184000,41.1,17.5,16.6,69.58
+243,"Architects, Town Planners and Surveyors",Architects,0.17,0.3,0.37,0.22,0.27,1.33,21.45,53000,27.5,15.8,8.1,69.58
+244,Welfare Professionals,Social workers,0.17,0.75,0.22,0.15,0.1,1.39,18.95,107000,82,24.1,15.1,69.58
+245,Librarians and Related Professionals,Librarians,0.16,0.34,0.14,0.31,0.2,1.15,13.83,20000,83.1,34.1,x,69.58
+246,Quality and Regulatory Professionals,Quality control and planning engineers,0.32,0.12,0.3,0.24,0.48,1.47,18.8,36000,22.8,28,15.2,69.58
+247,Media Professionals,"Journalists, newspaper and periodical editors",0.08,0.24,0.34,0.13,0.14,0.92,17.62,82000,42.4,17.9,5.6,69.58
+311,"Science, Engineering and Production Technicians",Laboratory technicians,0.38,0.12,0.36,0.32,0.58,1.75,10.93,74000,52.8,12.9,11.3,63.72
+312,Draughtspersons and Related Architectural Technicians,Architectural and town planning technicians,0.58,0.48,0.68,0.55,0.63,2.93,14.37,27000,32.2,12.1,5.7,63.72
+313,Information Technology Technicians,IT operations technicians,0.23,0.11,0.26,0.24,0.42,1.25,15.95,107000,33,13.1,19.2,63.72
+321,Health Associate Professionals,Paramedics,0.83,1,0.84,0.72,0.9,4.28,19.94,29000,39.7,13.9,x,63.72
+323,Welfare and Housing Associate Professionals,Youth and community workers,0.26,0.77,0.38,0.27,0.18,1.87,12.76,77000,75.8,21.6,10.9,63.72
+331,Protective Service Occupations,Police officers (sergeant and below),0.7,0.94,0.75,0.52,0.65,3.56,19.37,155000,30.6,4.4,3.7,63.72
+341,"Artistic, Literary and Media Occupations",Artists,0.34,0.07,0.27,0.33,0.59,1.61,13.8,56000,51.1,19.8,5.3,63.72
+342,Design Occupations,Graphic designers,0.03,0.11,0.09,0.04,0.25,0.53,13.44,92000,33.5,9.3,4.2,63.72
+344,Sports and Fitness Occupations,Sports players,0.24,0.41,0.62,0.67,0.65,2.58,x,16000,16.4,x,12.4,63.72
+351,Transport Associate Professionals,Air traffic controllers,0.27,0.47,0.26,0.23,0.37,1.6,x,9000,15.6,x,x,63.72
+352,Legal Associate Professionals,Legal associate professionals,0.12,0.31,0.16,0.2,0.23,1.03,15.01,81000,62.3,11.6,8.6,63.72
+353,"Business, Finance and Related Associate Professionals","Estimators, valuers and assessors",0.16,0.36,0.42,0.22,0.25,1.42,15.27,65000,25.7,21.7,7.3,63.72
+354,"Sales, Marketing and Related Associate Professionals",Buyers and procurement officers,0.13,0.23,0.24,0.16,0.18,0.94,15.41,63000,63.2,11.8,7.7,63.72
+355,Conservation and Environmental associate professionals,Conservation and environmental associate professionals,0.58,0.46,0.84,0.68,0.82,3.39,11.45,11000,31.1,19.5,x,63.72
+356,Public Services and Other Associate Professionals,Public services associate professionals,0.48,0.4,0.56,0.59,0.59,2.63,16.79,91000,62.5,22.1,11.4,63.72
+411,Administrative Occupations: Government and Related Organisations,National government administrative occupations,0.29,0.43,0.38,0.25,0.28,1.64,12.4,147000,63.2,24.9,12.2,57.24
+412,Administrative Occupations: Finance,Credit controllers,0.04,0.36,0.11,0.05,0.06,0.62,11.91,38000,72.3,13.2,6.6,57.24
+413,Administrative Occupations: Records,Records clerks and assistants,0.14,0.56,0.11,0.14,0.16,1.11,11.24,111000,76.6,13.6,10.6,57.24
+415,Other Administrative Occupations,Sales administrators,0.22,0.58,0.38,0.28,0.49,1.96,10.77,81000,72.5,11.9,10.7,57.24
+416,Administrative Occupations: Office Managers and Supervisors,Office managers,0.08,0.32,0.05,0.18,0.29,0.92,15.55,174000,74,19.6,6.5,57.24
+421,Secretarial and Related Occupations,Medical secretaries,0.14,0.3,0.01,0.17,0.16,0.78,11.56,69000,x,29.8,4.5,57.24
+511,Agricultural and Related Trades,Farmers,0.53,0.15,0.83,0.57,0.74,2.81,11.4,125000,18.1,26.6,x,18.85
+521,"Metal Forming, Welding and Related Trades",Smiths and forge workers,0.67,0.17,0.43,0.61,0.89,2.77,x,5000,x,19.6,x,18.85
+522,"Metal Machining, Fitting and Instrument Making Trades",Metal machining setters and setter-operators,0.59,0.13,0.17,0.55,0.85,2.29,13.02,52000,5.1,20.6,6.7,18.85
+523,Vehicle Trades,"Vehicle technicians, mechanics and electricians",0.68,0.3,0.7,0.72,0.88,3.27,12.5,171000,1.3,12.6,6.1,18.85
+524,Electrical and Electronic Trades,Electricians and electrical fitters,0.77,0.39,0.61,0.94,0.92,3.63,15.25,245000,1.8,14.3,5.6,18.85
+525,"Skilled Metal, Electrical and Electronic Trades Supervisors","Skilled metal, electrical and electronic trades supervisors",0.47,0.32,0.35,0.49,0.7,2.33,16.27,37000,7.8,22.4,4.9,18.85
+531,Construction and Building Trades,Steel erectors,0.82,0.26,0.67,0.89,0.87,3.52,12.41,7000,x,x,x,18.85
+532,Building Finishing Trades,Plasterers,0.57,0.25,0.47,0.89,0.71,2.89,13.39,48000,x,15.3,3.5,18.85
+533,Construction and Building Trades Supervisors,Construction and building trades supervisors,0.64,0.42,0.75,0.67,0.75,3.23,16.18,65000,1.4,20.5,7.4,18.85
+541,Textiles and Garments Trades,Weavers and knitters,0.43,0.16,0.09,0.37,0.43,1.48,10.54,2000,67.9,37.9,x,18.85
+542,Printing Trades,Pre-press technicians,0.17,0.19,0.03,0.21,0.47,1.06,x,4000,33.5,43.3,x,18.85
+543,Food Preparation and Hospitality Trades,Butchers,0.41,0.35,0.12,0.53,0.79,2.19,10.1,34000,9.9,13.7,9.1,18.85
+544,Other Skilled Trades,"Glass and ceramics makers, decorators and finishers",0.53,0.21,0.27,0.53,0.8,2.33,11.58,11000,61,14.2,x,18.85
+612,Childcare and Related Personal Services,Nursery nurses and assistants,0.14,0.57,0.21,0.44,0.11,1.48,8.86,226000,x,9.7,8.9,14.89
+613,Animal Care and Control Services,Veterinary nurses,0.74,0.69,0.17,0.7,0.66,2.96,11,18000,x,1.4,x,14.89
+614,Caring Personal Services,Nursing auxiliaries and assistants,0.39,0.8,0.18,0.74,0.48,2.58,10.93,339000,80.4,18.3,18.1,14.89
+621,Leisure and Travel Services,Sports and leisure assistants,0.29,0.64,0.29,0.42,0.4,2.05,9.26,68000,42.1,3.1,6.5,14.89
+622,Hairdressers and Related Services,Hairdressers and barbers,0.23,0.67,0.04,0.48,0.44,1.86,8.22,158000,86.5,8.3,7.6,14.89
+623,Housekeeping and Related Services,Housekeepers and related occupations,0.43,0.35,0.36,0.71,0.61,2.45,9.02,49000,x,30.8,13.9,14.89
+624,Cleaning and Housekeeping Managers and Supervisors,Cleaning and housekeeping managers and supervisors,0.43,0.35,0.36,0.71,0.61,2.45,9.6,77000,73.9,18,11.5,14.89
+711,Sales Assistants and Retail Cashiers,Sales and retail assistants,0.27,0.56,0.37,0.47,0.5,2.17,8.74,1004000,65.6,13.3,13.1,15.91
+712,Sales Related Occupations,Collector salespersons and credit agents,0.08,0.48,0.26,0.16,0.14,1.11,10.25,15000,39.4,5.1,10.3,15.91
+713,Sales Supervisors,Sales supervisors,0.22,0.5,0.18,0.47,0.29,1.66,10.1,164000,53.6,11.4,10,15.91
+721,Customer Service Occupations,Call and contact centre occupations,0.14,0.6,0.06,0.17,0.18,1.14,9.42,93000,58.6,10.5,13.4,15.91
+722,Customer Service Managers and Supervisors,Customer service managers and supervisors,0.08,0.32,0.05,0.18,0.29,0.92,13.93,186000,54.8,11,8.8,15.91
+811,Process Operatives,"Food, drink and tobacco process operatives",0.57,0.22,0.21,0.63,0.86,2.5,9.5,134000,37.9,15.7,14.5,5.44
+812,Plant and Machine Operatives,Paper and wood machine operatives,0.65,0.05,0.18,0.66,0.77,2.3,10.38,25000,15.1,19.1,6.1,5.44
+813,Assemblers and Routine Operatives,Assemblers (electrical and electronic products),0.43,0.18,0.11,0.41,0.73,1.87,10.92,25000,34.8,21.2,5.7,5.44
+814,Construction Operatives,"Scaffolders, stagers and riggers",0.71,0.44,0.71,0.93,0.85,3.65,15.65,27000,2.4,8.9,x,5.44
+821,Road Transport Drivers,Large goods vehicle drivers,0.43,0.43,0.66,0.42,0.66,2.59,12,304000,0.8,25.4,3.9,5.44
+822,Mobile Machine Drivers and Operatives,Crane drivers,0.58,0.41,0.53,0.51,0.69,2.73,15.19,14000,x,18.3,x,5.44
+823,Other Drivers and Transport Operatives,Train and tram drivers,0.73,0.35,0.64,0.47,0.81,3,30.13,31000,10.5,18.4,7.7,5.44
+911,Elementary Agricultural Occupations,Farm workers,0.39,0.18,0.75,0.56,0.53,2.41,9.44,59000,29.2,14.9,x,0
+912,Elementary Construction Occupations,Elementary construction occupations,0.76,0.33,0.66,0.94,0.86,3.54,10.25,161000,2.2,12.4,5.3,0
+913,Elementary Process Plant Occupations,Industrial cleaning process occupations,0.49,0.22,0.52,0.64,0.82,2.68,8.59,28000,24.6,17,11.2,0
+921,Elementary Administration Occupations,"Postal workers, mail sorters, messengers and couriers",0.32,0.35,0.35,0.54,0.5,2.05,12.45,167000,20.4,19.8,15.1,0
+923,Elementary Cleaning Occupations,Window cleaners,0.54,0.25,0.29,0.69,0.55,2.32,9.64,26000,4.1,15.9,3.4,0
+924,Elementary Security Occupations,Security guards and related occupations,0.41,0.58,0.29,0.44,0.47,2.19,9.88,185000,16.5,23.6,26.2,0
+925,Elementary Sales Occupations,Shelf fillers,0.32,0.39,0.21,0.7,0.47,2.08,8.87,81000,45.8,17.7,7.8,0
+926,Elementary Storage Occupations,Elementary storage occupations,0.58,0.34,0.71,0.57,0.74,2.94,9.77,449000,20.1,15.7,10.6,0
+927,Other Elementary Services Occupations,Hospital porters,0.52,0.27,0.31,0.78,0.57,2.44,10.47,18000,1.5,43,16.2,0
