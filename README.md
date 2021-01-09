@@ -1,5 +1,5 @@
 # GIS
-UCL GIS Practice - Yasmine Hujair
+UCL GIS Coursework - Yasmine Hujair - 11/01/2021
 
 ### Description
 This repository includes the data and R script used to assess the potential workday distribution after lockdown is lifted, based on an assumed increase in working from home. 
