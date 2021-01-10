@@ -1,0 +1,510 @@
+---
+title: How would the distribution of people during the working day in London be impacted
+  by increases in home working patterns post-COVID19?
+author: "Yasmine Hujair"
+date: "January 2021"
+output: 
+  html_document:
+    theme: readable
+    highlight: tango
+---
+
+# Introduction
+
+Flexible and home working rates in the UK tripled between 1981 and 2019 (Felstead and Reuschke, 2020). In March 2020, the UK entered a national lockdown in response to the COVID-19 Pandemic whereby millions of workers were asked to work from home (WFH). This catalytic decision has resulted in a significant change towards remote working and has the potential to revolutionise commuting pattens. Nine out of ten (88.2%) employees have expressed desire to continue to WFH in some way, and roughly half wish to continue to WFH often, after restrictions are lifted (Felstead and Reuschke, 2020). 
+Transport infrastructure in the UK is largely designed to facilitate commuting between 08:00 – 09:00 and 17:00 – 18:00. Therefore, a reduction in commuting during these hours may be an opportunity to reconsider planning and designing for the two peak hours of the working day and to encourage active travel.
+This analysis considers the previously ‘usual’ workday population distribution of Greater London in relation to the potential distribution in a city that embraces working from home as a new normal. 
+
+# Research Question
+
+The research question focuses on how the distribution of people during the working day in London will be impacted by potential changes in home working patterns. 
+
+# Methodology Overview
+
+All data used in this analysis can be found [here](https://github.com/YHuj20/GIS/). This analysis considers the recorded employed workday population distribution in 2011 Census as a baseline scenario, representing the usual distribution of population in Greater London. Attitudes towards working from home are changing, but it is not yet known to what extent. Therefore, two projected scenarios have been considered to visualise potential working patterns after restrictions are lifted entirely; a ‘high WFH’ (scenario 1) and ‘realistic WFH’ (scenario 2). This section sets out the data used for the analysis and the detailed methodology used to visualise each scenario. 
+
+## Step 1: Reading in Data 
+
+The shapefile used to map the MSOA boundaries can be found [here](https://data.london.gov.uk/download/statistical-gis-boundary-files-london/9ba8c833-6370-4b11-abdc-314aa020d5e0/statistical-gis-boundaries-london.zip). In the below script, please update the file path to where you have saved the MSOA shapefile. The remaining data files can be read directly from my GitHub repository.
+
+```{r Reading in and wrangling data, results = 'hide', message=FALSE, warning = FALSE}
+#The following libraries should be loaded first
+base::library(dplyr)
+base::library(bookdown)
+base::library(spatstat)
+base::library(here)
+base::library(sp)
+base::library(rgeos)
+base::library(maptools)
+base::library(GISTools)
+base::library(tmap)
+base::library(sf)
+base::library(geojson)
+base::library(geojsonio)
+base::library(tmaptools)
+base::library(downloader)
+base::library(tidyverse)
+base::library(spdep)
+base::library(car)
+base::library(fs)
+base::library(janitor)
+base::library(rgdal)
+base::library(broom)
+base::library(stringr)
+base::library(mapview)
+base::library(crosstalk)
+base::library(sjmisc)
+base::library(ggmap)
+base::library(leafpop)
+base::library(leaflet)
+base::library(hrbrthemes)
+base::library(ggplot2)
+base::library(viridis)
+base::library(grid)
+base::library(scales)
+
+#-----------------------------------------------------
+## Pulling In Data
+
+#Download MSOA shapefile from: https://data.london.gov.uk/download/statistical-gis-boundary-files-london/9ba8c833-6370-4b11-abdc-314aa020d5e0/statistical-gis-boundaries-london.zip
+#Read in MSOA Shapefile - please replace filepath with local filepath
+
+MSOABoundaries <- sf::st_read(here::here("MSOA_2011_London_gen_MHW.shp"))
+st_crs(MSOABoundaries)  
+#st_transform(., 27700)
+  
+
+#Pull in OD Data 2011 Census
+
+ODData <- readr::read_csv("https://raw.githubusercontent.com/YHuj20/GIS/main/ODData.csv",na = c("", "NA", "n/a"), 
+                   locale = locale(encoding = 'Latin1'), 
+                   col_names = TRUE)
+
+ODWorkdayData <- readr::read_csv("https://raw.githubusercontent.com/YHuj20/GIS/main/ODDataWorkday.csv",na = c("", "NA", "n/a"), 
+                   locale = locale(encoding = 'Latin1'), 
+                   col_names = TRUE)
+
+#Pull in Population Numbers by Occupation Type 2011 Census
+
+Occupations <- read_csv("https://raw.githubusercontent.com/YHuj20/GIS/main/Occupation-by-MSOA.csv",na = c("", "NA", "n/a"), 
+                        locale = locale(encoding = 'Latin1'), 
+                        col_names = TRUE)
+
+WorkdayPopOccupations <- readr::read_csv("https://raw.githubusercontent.com/YHuj20/GIS/main/WD606EW-Occupations-WorkdayPopulation.csv",na = c("", "NA", "n/a"), 
+                                  locale = locale(encoding = 'Latin1'), 
+                                  col_names = TRUE)
+
+#Pull in ONS data on working from home
+
+HomeWorkingProportions <- readr::read_csv("https://raw.githubusercontent.com/YHuj20/GIS/main/ONS-Ability-to-work-from-home.csv",na = c("", "NA", "n/a"), 
+                                   locale = locale(encoding = 'Latin1'), 
+                                   col_names = TRUE)
+
+
+
+
+```
+
+## Step 2: Data Wrangling
+
+```{r, results = 'hide', message=FALSE, warning = FALSE}
+## Data Wrangling 
+
+#Change type to doubles and drop first two non numeric rows
+
+ODData <- ODData %>% 
+  mutate_at(vars(`place of work`,`place of work_1`,`place of work_2`,`place of work_3`,`place of work_4`,`place of work_5`,`place of work_6`,`place of work_7`,`place of work_8`,`place of work_9`,`place of work_10`,`place of work_11`), as.numeric)
+ODData <- ODData[-c(1,2),]
+head(ODData,5)
+typeof(ODData$`place of work_2`)
+
+ODWorkdayData <- ODWorkdayData[-c(984:989),]
+ODData <- ODData[-c(984:989),]
+WorkdayPopOccupations <- WorkdayPopOccupations[-c(984:989),]
+
+# Create new column summing all commuters per MSOA - this creates the total employed workday population per MSOA
+
+ODData$ALL <- ODData$`place of work`+ODData$`place of work_1`+ODData$`place of work_2`+ODData$`place of work_3`+ODData$`place of work_4`+ ODData$`place of work_5`+ODData$`place of work_6`+ ODData$`place of work_7`+ODData$`place of work_8`+ODData$`place of work_9`+ODData$`place of work_10`+ODData$`place of work_11`
+
+
+```
+
+
+
+## Step 3: 2011 Baseline Mapping
+To establish a baseline scenario, the total numbers of employed people from the recorded ‘workday population’ at MSOA level (2011 Census) has been mapped. The workday populations include employed people from origins (residence) outside of Greater London who travel there for work. This represents the typical population distribution of working people on a working day in Greater London. This section provides an indicative initial map of workday populations. 
+
+```{r, results = 'hide', message=FALSE, warning = FALSE, fig.align="center"}
+
+#Join ODData, ODWorkdayData and MSOA Shapefile
+
+ODData <- ODData %>% 
+  rename(
+    MSOA11CD = X2,
+  )
+
+ODWorkdayData <- ODWorkdayData %>% 
+  rename(
+    MSOA11CD = `Place of Work: MSOA11CD`,
+  )
+
+ODWorkdayData <- ODWorkdayData %>% 
+  rename(
+    'Workday Population' = `Usual Residence: England and Wales`,
+  )
+
+ODData <- left_join(ODWorkdayData, ODData, by = c('MSOA11CD'))
+
+CommuteMap <- left_join(MSOABoundaries, ODData, by = c('MSOA11CD'))
+
+#bring in the colour pallette
+library(RColorBrewer)
+pal <- brewer.pal(9, "YlGnBu") 
+class(pal)
+
+#This provides the first indicative map of 2011 workday population
+plot(CommuteMap["ALL"],
+     main = "Total number of people commuting for work (2011)",
+     breaks = "quantile", nbreaks = 9,
+     pal = pal)
+
+
+```
+
+
+## Step 4: Post-Covid Projected Scenario 1- ‘High WFH’ 
+The first projected scenario represents higher rates of WFH. ONS figures on WFH during April 2020 have been used to represent a maximum rate of home working in the UK. It is important to note that the data was collected from a survey sample of 18,000 households using the following question:
+<br>
+_Did you do any WFH in the previous week (Monday to Sunday)?_
+
+The WFH% has been applied to the residential populations by occupation (MSOA level) and the workday populations by occupation (MSOA level). The population has then been redistributed, by removal of home workers from their workplaces and the addition of home workers to their residence. The below script does this by converting the data frames of populations by MSOA and by Occupation to a matrix, and multiplying the matrix by the WFH% for each occupation. The sweep function has been used to multiply the matrix by the vector and the resultant matrix converted back to a tibble. 
+
+```{r, results = 'hide', message=FALSE, warning = FALSE, fig.align="center"}
+#Drop unused columns
+HomeWorkingProportions <- HomeWorkingProportions[-(366:379),]
+
+
+##Calculate Scenario 1 Commuters 
+
+#Workday population calculations
+
+#Add new column with 1- % WFH
+HomeWorkingProportions$`% Working from home during Lockdown` <- HomeWorkingProportions$`% Working from home during Lockdown`/100
+HomeWorkingProportions$Remaining <- 1 - HomeWorkingProportions$`% Working from home during Lockdown`
+names(WorkdayPopOccupations) <- substring(names(WorkdayPopOccupations),1,3)
+WorkdayPopOccupations <- WorkdayPopOccupations %>% 
+  rename(
+    'MSOAName' = '201',
+    'MSOACode' = 'mne'
+  )
+
+#rotate df to use row as vector
+HomeWorkingProportions <- rotate_df(HomeWorkingProportions)
+#Create matrix first
+WorkdayPopOccupationsMat <- as.matrix(WorkdayPopOccupations)
+WorkdayPopOccupationsMat <- WorkdayPopOccupationsMat[,-c(1:3)]
+typeof(WorkdayPopOccupationsMat)
+class(WorkdayPopOccupationsMat) <- "numeric"
+#Convert row to vector
+WFHProp <- unlist(HomeWorkingProportions[15,])
+class(WFHProp) <- "numeric"
+print(WFHProp)
+#Multiply vector by matrix
+LockdownWFH2020 <- sweep(WorkdayPopOccupationsMat,2,WFHProp ,"*")
+#Convert back to tibble
+LockdownWFH2020 <- as_tibble(LockdownWFH2020)
+#create new column summing people working from home
+LockdownWFH2020$ALLWFH <- rowSums(LockdownWFH2020)
+LockdownWFH2020$MSOACode <- WorkdayPopOccupations$MSOACode
+LockdownWFH2020$MSOAName <- WorkdayPopOccupations$MSOAName
+  
+#Residential population calculations (adding people working from home)
+
+names(Occupations) <- substring(names(Occupations),1,3)
+Occupations <- Occupations %>% 
+  rename(
+    'MSOAName' = '201',
+    'MSOACode' = 'mne'
+  )
+
+
+#Create matrix first
+OccupationsMat <- as.matrix(Occupations)
+OccupationsMat <- OccupationsMat[,-c(1:3)]
+typeof(OccupationsMat)
+class(OccupationsMat) <- "numeric"
+#Multiply vector by matrix
+LockdownResiPop2020 <- sweep(OccupationsMat,2,WFHProp ,"*")
+#Convert back to tibble
+LockdownResiPop2020 <- as_tibble(LockdownResiPop2020)
+#create new column summing people working from home
+LockdownResiPop2020$ALLWFH <- rowSums(LockdownResiPop2020)
+LockdownResiPop2020$MSOACode <- Occupations$MSOACode
+LockdownResiPop2020$MSOAName <- Occupations$MSOAName
+
+
+#Data wrangling
+#Join based on MSOA code
+WfhEstimates <-   tibble(LockdownWFH2020$ALLWFH, LockdownWFH2020$MSOACode)
+
+WfhEstimates <- WfhEstimates %>% 
+  rename(
+    WorkdayPopWFH = `LockdownWFH2020$ALLWFH`,
+  )
+WfhEstimates <- WfhEstimates %>% 
+  rename(
+    MSOACode = `LockdownWFH2020$MSOACode`,
+  )
+
+WfhEstimates <- left_join(LockdownResiPop2020, WfhEstimates, by = c('MSOACode'))
+
+#Drop occupations columns
+WfhEstimates <- WfhEstimates[,-c(1:90)]
+
+WfhEstimates <- WfhEstimates %>% 
+  rename(
+    ResiWFH = `ALLWFH`,
+  )
+
+#Calculations of redistributing population 
+WfhEstimates$AllResiPop <- Occupations$All
+WfhEstimates$AllWorkdayPop <- WorkdayPopOccupations$All
+WfhEstimates$RemainingWorkday <- WfhEstimates$AllWorkdayPop - WfhEstimates$WorkdayPopWFH
+WfhEstimates$RedistributedPopulation <- WfhEstimates$RemainingWorkday + WfhEstimates$ResiWFH
+
+#Map the redistributed population - Scenario 1 (initial indicative map)
+WfhEstimates <- WfhEstimates %>% 
+  rename(
+    MSOA11CD = MSOACode,
+  )
+Commute2023 <- left_join(MSOABoundaries, WfhEstimates, by = c('MSOA11CD'))
+
+plot(Commute2023["RedistributedPopulation"],
+     main = "Projected Working Day Population (S1)",
+     breaks = "quantile", nbreaks = 9,
+     pal = pal)
+```
+
+## Step 5: Post-Covid Projected Scenario 2 – ‘Realistic’ rates of WFH
+The second projected scenario represents ‘realistic’ rates of WFH. The ONS has adapted a methodology from O*NET that scores occupations based on their ability to be performed from home (“Which jobs can be done from home? - Office for National Statistics,” 2020). The score is generated for each occupation (matched to UK Standard Occupational Classification (SOC) codes) by considering specified criteria; exposure, interaction intensity, location, physical activities, tools or protective equipment. The higher the score, the less likely the occupation can be done from home. For this analysis, the scores were normalised and applied to the recorded proportion of people WFH during April 2020. Therefore, if the ability to WFH score for a specific occupation was 0, in this methodology all 
+
+The remaining calculations follow the same principles as Scenario 1. The workday population is ‘redistributed’ by subtracting home workers from the ‘workday’ population and adding home workers to the residential population. 
+
+
+
+```{r, results = 'hide', message=FALSE, warning = FALSE}
+#Calculate Scenario 2 2023 Commuters
+
+#Normalise ability to work from home score (row)
+#rotate tibble to calculate new column
+HomeWorkingProportions <- rotate_df(HomeWorkingProportions)
+MinAbilityScore <- min(HomeWorkingProportions$`Ability to homework score`, na.rm = TRUE)
+MaxAbilityScore <- max(HomeWorkingProportions$`Ability to homework score`, na.rm = TRUE)
+class(HomeWorkingProportions$`Ability to homework score`) <- "numeric"
+class(MaxAbilityScore) <- "numeric"
+class(MinAbilityScore) <- "numeric"
+class(HomeWorkingProportions$`% Working from home during Lockdown`) <- 'numeric'
+ScalingScore <- MaxAbilityScore-MinAbilityScore
+HomeWorkingProportions$NormalisedAbilityScore <-(HomeWorkingProportions$`Ability to homework score`-MinAbilityScore)/ScalingScore
+HomeWorkingProportions$Scenario2WFH <- (1-HomeWorkingProportions$NormalisedAbilityScore)*HomeWorkingProportions$`% Working from home during Lockdown`
+HomeWorkingProportions <- rotate_df(HomeWorkingProportions)
+
+#calculate working from home for scenario 2
+
+#Residential WFH 2023 S2 calculations
+#Convert row (WFH Proportions) to vector
+WFHProp2023 <- unlist(HomeWorkingProportions[18,])
+class(WFHProp2023) <- "numeric"
+print(WFHProp2023)
+#Multiply vector by matrix
+WFHResiPop2023S2 <- sweep(OccupationsMat,2,WFHProp2023,"*")
+#Convert back to tibble
+WFHResiPop2023S2 <- as_tibble(WFHResiPop2023S2)
+#create new column summing people working from home
+WFHResiPop2023S2$ResiAllWFH <- rowSums(WFHResiPop2023S2)
+WFHResiPop2023S2$MSOACode <- Occupations$MSOACode
+WFHResiPop2023S2$MSOAName <- Occupations$MSOAName
+
+#Workday WFH 2023 S2 calculations
+#Multiply vector by matrix
+WFHWorkdayPop2023S2 <- sweep(WorkdayPopOccupationsMat,2,WFHProp2023,"*")
+#Convert back to tibble
+WFHWorkdayPop2023S2 <- as_tibble(WFHWorkdayPop2023S2)
+#create new column summing people working from home
+WFHWorkdayPop2023S2$WorkdayAllWFH <- rowSums(WFHWorkdayPop2023S2)
+WFHWorkdayPop2023S2$MSOACode <- WorkdayPopOccupations$MSOACode
+WFHWorkdayPop2023S2$MSOAName <- WorkdayPopOccupations$MSOAName
+
+#Create new tibble of above
+WfhEstimates2023 <- tibble(WFHWorkdayPop2023S2$MSOACode, WFHWorkdayPop2023S2$MSOAName, WFHWorkdayPop2023S2$WorkdayAllWFH, WFHResiPop2023S2$ResiAllWFH, WFHResiPop2023S2$MSOACode, WFHResiPop2023S2$MSOAName)
+
+WfhEstimates2023 <- WfhEstimates2023 %>%
+  rename(
+    MSOA11CD = `WFHWorkdayPop2023S2$MSOACode`,
+    MSOA11NM = `WFHWorkdayPop2023S2$MSOAName`,
+    WorkdayAllWFH = `WFHWorkdayPop2023S2$WorkdayAllWFH`,
+    ResiAllWFH = `WFHResiPop2023S2$ResiAllWFH`
+  )
+
+WfhEstimates2023 <- WfhEstimates2023[,-c(5,6)]
+
+#Calculate redistributed population
+WfhEstimates2023$AllResiPop <- Occupations$All
+WfhEstimates2023$AllWorkdayPop <- WorkdayPopOccupations$All
+WfhEstimates2023$RemainingWorkday <- WfhEstimates2023$AllWorkdayPop - WfhEstimates2023$WorkdayAllWFH
+WfhEstimates2023$RedistributedPopulation <- WfhEstimates2023$RemainingWorkday + WfhEstimates2023$ResiAllWFH
+
+
+S2CommuteMap2023 <- left_join(MSOABoundaries, WfhEstimates2023, by = c('MSOA11CD'))
+
+plot(S2CommuteMap2023["RedistributedPopulation"],
+     main = "Projected Working Day Population (S2)",
+     breaks = "quantile", nbreaks = 9,
+     pal = pal)
+```
+
+## Methodology Summary
+This methodology uses data collected by the ONS to predict the potential workday distribution of employed people after lockdown restrictions are lifted in their entirety. Therefore, this methodology can be adjusted and tweaked as more details become known, including the results of the 2021 Census. The methodology is open to proposed adjustments and assumptions and is a starting point for understanding the consequences of the shift towards working from home. 
+
+# Results
+Graphs displaying the resultant workday population distribution per MSoa in Greater London have been plotted to comprehend the distribution of data and how they compare to one another. The following code wrangles the data into a format suitable for plotting graphs, by sorting it and rearranging it to a tall dataframe.
+
+```{r, message= FALSE, warning = FALSE}
+#Drop place of work columns
+ODData <- ODData[,-c(5:16)]
+ODData <- ODData %>% 
+  rename(
+    'Resi Population' = ALL,
+  )
+
+#Data wrangling to sort data and change format to 'tall'
+
+SortedODData <- ODData[order(-ODData$`Workday Population`),]
+
+SortedODData <- SortedODData %>% 
+  rename(
+    WDPop2011 = 'Workday Population'
+  )
+
+SortedODData$idu <- as.numeric(row.names(SortedODData))
+Sorted2023S1Data <- WfhEstimates[order(-WfhEstimates$RedistributedPopulation),]
+Sorted2023S1Data$idu <- as.numeric(row.names(Sorted2023S1Data))
+Sorted2023S2Data <- WfhEstimates2023[order(-WfhEstimates2023$RedistributedPopulation),]
+Sorted2023S2Data$idu <- as.numeric(row.names(Sorted2023S2Data))
+
+
+#create dataframe of all three sorted populations (for each scenario)
+Scatterplot <- tibble(Sorted2023S2Data$RedistributedPopulation, Sorted2023S1Data$RedistributedPopulation, SortedODData$WDPop2011)
+Scatterplot$Index <- seq.int(nrow(Scatterplot))
+
+Scatterplot <- Scatterplot %>% 
+  rename(
+    '2011 Baseline' = 'SortedODData$WDPop2011',
+    'S1' = 'Sorted2023S1Data$RedistributedPopulation',
+    'S2' = 'Sorted2023S2Data$RedistributedPopulation'
+    )
+
+ScatterplotTall <-reshape2::melt(Scatterplot, id.vars = "Index" )
+
+```
+
+The graphs are plotted using the below code.
+
+```{r, warning = FALSE, fig.align="center"}
+#Scatter plot with rug
+
+ggplot(ScatterplotTall, aes(Index, value, col=variable)) +
+  geom_point(alpha=0.7 ,size=3) +
+  scale_color_brewer("Scenario", palette = "Dark2") +
+  geom_rug(col="black",alpha=0.1, size=3, sides = "r") +
+  theme_classic() +
+  theme(legend.position = "bottom") +
+  theme(legend.title = element_text(size=12)) +
+  theme(legend.text = element_text(size=12)) +
+  scale_y_continuous(labels = comma) +
+  ylab("Workday Population") +
+  xlab("MSOA")
+
+#Box Plots
+
+p <- ggplot(ScatterplotTall, aes(Index, value, col=variable))
+
+p + geom_boxplot()+
+  scale_color_brewer("Scenario", palette = "Dark2") +
+  theme_classic() +
+  theme(legend.position = "bottom") +
+  scale_y_continuous(labels = comma) +
+  ylab("Workday Population") +
+  xlab("")
+  
+
+```
+
+
+## Mapping the Results
+Now that all three scenarios have been calculated, they must be mapped with a consistent colour scale to compare the results. The below code remaps the three scenarios and provides the outputs in an interactive map. The scales represent the exponential nature of the data.
+
+
+```{r, warning = FALSE, message= FALSE, fig.align="center"}
+tmap_mode("view")
+Workdaypop2011 <- tm_shape(CommuteMap) +
+  tm_fill(col = "Workday Population", style = "log10_pretty", palette = "BuPu", border.alpha = 0.5, title="Workday Population") +
+  tm_legend(legend.position = c("left","bottom"))+
+  tm_layout(title = "Baseline Workday Population Distribution (2011)", title.size = 1.1, title.position = c("centre", "top"))
+Workdaypop2011
+
+#set cuts to the cuts created by tmap in 2011 plot
+prettycuts <- c(0,100,316,1000,3162,10000,31623,100000,316228,1000000)
+
+Workdaypop2023S1 <- tm_shape(Commute2023) +
+  tm_fill(col = "RedistributedPopulation", breaks = prettycuts, palette = "BuPu", border.alpha = 0.5, title="Workday Population") +
+  tm_layout(title = "Projected Workday Population Distribution - Scenario 2", title.size = 1.1, title.position = c("centre", "top"))
+Workdaypop2023S1
+
+Workdaypop2023S2 <- tm_shape(S2CommuteMap2023) +
+  tm_fill(col = "RedistributedPopulation", breaks = prettycuts, palette = "BuPu", border.alpha = 0.5, title="Workday Population") +
+  tm_layout(title = "Projected Workday Population Distribution - Scenario 2", title.size = 1.1, title.position = c("centre", "top"))
+Workdaypop2023S2
+```
+
+## Mapping the Difference
+Finally, the difference between the 'realistic' WFH (Scenario 2) population distribution and the reocrded 2011 Workday Population has been mapped. This provides the locations of the areas that would be most affected by such a shift towards home working after lockdown. The code below has been used to map this.
+
+```{r, warning = FALSE, message= FALSE, fig.align="center"}
+
+PopulationChange <- ODData[,-c(4:5)]
+PopulationChange <- left_join(PopulationChange, WfhEstimates2023, by = c('MSOA11CD'))
+PopulationChange <- PopulationChange[,-c(4:9)]
+PopulationChange <- PopulationChange %>% 
+  rename(
+    'Scenario 2' = 'RedistributedPopulation',
+    '2011 Baseline' = 'Workday Population'
+  )
+
+PopulationChange$Difference <- PopulationChange$`Scenario 2`- PopulationChange$`2011 Baseline`
+#Add geometry
+PopulationChangeMap <- left_join(MSOABoundaries, PopulationChange, by = c('MSOA11CD'))
+
+#Map the difference
+prettybins = c(0, 3, 10, 32, 316, 100, 316, 1000, 3162, 10000)
+
+
+PCM <- tm_shape(PopulationChangeMap) +
+  tm_fill(col = "Difference", border.alpha = 0.5, palette = "Spectral", title="Change in Workday Population") +
+  tm_legend(legend.position = c("left","bottom"))+
+  tm_layout(title = "Projected Workday Population Distribution - Scenario 1", title.size = 1.1, title.position = c("centre", "top")) +
+  tm_scale_bar(color.dark = "gray60",
+               position = c("right", "bottom"))
+PCM
+```
+
+
+
+# Acknowledgements
+
+Thank you to the Centre for Advanced Spatial Analysis (CASA) at UCL who have taught me the spatial analysis techniques used in this analysis. In particular Dr Adam Dennett and Dr Andrew Maclachlan. In addition, I would like to thank the following people who have provided code in repositories and online resources that have helped me form this analysis:
+
+* [Hollie at Zevross Spatial Analysis](http://zevross.com/blog/2018/10/02/creating-beautiful-demographic-maps-in-r-with-the-tidycensus-and-tmap-packages/)
+* [Claudia Engel at Stanford University](https://github.com/cengel)
+* [William Surles at Datacamp](https://rpubs.com/williamsurles/293454)
+
